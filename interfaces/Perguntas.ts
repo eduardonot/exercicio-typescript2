@@ -1,8 +1,5 @@
 export interface Pergunta {
   pergunta: string
-  alternativas: {
-    letra: string,
-    resposta: string
-  }[]
+  alternativas: string[]
   alternativaCorreta: string
 }
