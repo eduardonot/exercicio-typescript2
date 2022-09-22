@@ -20,7 +20,7 @@ export class Jogo {
     if (this.perguntas.length < 1) {
       throw new Error('Jogo só pode ser iniciado com perguntas cadastradas')
     }
-
+    console.log(`Seja bem vindo, ${this.participante}.`)
     this.enviarPergunta()
   }
 
@@ -37,21 +37,26 @@ export class Jogo {
   }
 
   enviarPergunta (indicePergunta: number = 0): void {
+    console.clear()
     const self = this
     const perguntas = this.perguntas
     if (indicePergunta === perguntas.length) {
-      console.log('Parabéns, você finalizou o jogo')
+      console.log('Parabéns, você venceu!')
       self.encerrarJogo(TiposEncerramento.vitoria, self.dinheiroInicial)
       return
     }
-    rl.question(perguntas[indicePergunta].pergunta + '\nDigite R para Responder - D para Desistir: ', function(value: string) {
+    console.log(`Pergunta valendo ${self.dinheiroInicial + 100000}\n${perguntas[indicePergunta].pergunta}`)
+    perguntas[indicePergunta].alternativas.forEach(alternativa => {
+      console.log(alternativa)
+    })
+    rl.question('Digite R para Responder - D para Desistir: ', function(value: string) {
       switch (value.toLowerCase()) {
         case 'd':
           console.log('Desistiu')
           self.encerrarJogo(TiposEncerramento.desistencia, self.dinheiroInicial)
           return
         case 'r':
-          rl.question(perguntas[indicePergunta].alternativas.toString() + ': ', function (resposta: string) {
+          rl.question('Digite a Letra desejada: ', function (resposta: string) {
             if (resposta.toLowerCase() === perguntas[indicePergunta].alternativaCorreta.toLowerCase()) {
               indicePergunta++
               self.dinheiroInicial += 100000
@@ -69,10 +74,11 @@ export class Jogo {
     })
   }
 
-  cadastrarPergunta (pergunta: Pergunta): void {
+  cadastrarPergunta (pergunta: Pergunta): Pergunta {
     if (typeof pergunta.alternativaCorreta !== 'string' || typeof pergunta.alternativas !== 'object' || typeof pergunta.pergunta !== 'string') {
       throw new Error('Pergunta inválida')
     }
     this.perguntas.push(pergunta)
+    return pergunta
   }
 }
